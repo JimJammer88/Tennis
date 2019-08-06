@@ -93,6 +93,7 @@ The current implementation could be improved by considering the following
 * Systematic hyper parameter optimisation
 * Using batch normalisation
 * Using a prioritised replay buffer
+* Better code structure for easier debugging
 
 
 It would also be interesting to implement a form of collaboraitive training that can be performed online. That is where the agents do not need to share resources for training. The paper [MADDPG] discusses options for this.
