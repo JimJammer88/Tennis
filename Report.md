@@ -17,9 +17,7 @@ The MADDPG algorithm from [MADDPG] is shown below.
 ![MADDPG Algorithm](maddpg.JPG)
 Format: ![MADDPG Algorithm](url)
 
-In this project we made use of the implementation of DDPG provided in the Deep Reinforcement Learning course repository [DRLGIT] and modifieid the code to implemt MADDPG.
-
-This was done by creating a class MADDPG which would call two instance of a single agent w
+In this project we made use of the implementation of DDPG provided in the Deep Reinforcement Learning course repository [DRLGIT] and modifieid the code to implement. This was done by creating a class MADDPG to control the centralised componennts of the algorithm and another class DDPG to control the decentralised components.
 
 
 
@@ -46,12 +44,7 @@ The critic network maps the state-action space to a single value using the follo
 
 ### Hyperparameters
 
-The hyperparameters used are listed below. These were kept the same as the provided code except that we; 
-
-* Decreased the buffer size. This was originally e^6 and was reduced as an attempt to speed up training.
-* Increased the batch size. This was done on the recommendation of user Max G in the course forum.
-* Set learning rate of the critic to be equal to that of the actor.
-* Did not use weight decay.
+The hyperparameters used are listed below. The biggest impact was found by reducing the number of layers of the actor and critic networks.
 
 
 HyperParameter | Description | Value
@@ -81,6 +74,8 @@ The environment is considered solved when the max score between both agents aver
 Our agent achieved this after episode 1091.
 
 The average of the max score over the previous 100 episodes is plotted below.
+
+It can be seen that the training is quite unstable - the agents achieve good performance but then the performance actually gets worse with more training.
 
 ![Training](Plot.JPG)
 Format: ![training](url)
