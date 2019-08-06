@@ -11,13 +11,21 @@ We made use of the implementation of DDPG, the single agent case, provided in th
 
 ## Implementation Details
 
-### Modifications of DDPG
 The MADDPG algorithm from [MADDPG] is shown below.
 
 ![MADDPG Algorithm](maddpg.JPG)
 Format: ![MADDPG Algorithm](url)
 
 In this project we made use of the implementation of DDPG provided in the Deep Reinforcement Learning course repository [DRLGIT] and modifieid the code to implement. This was done by creating a class MADDPG to control the centralised componennts of the algorithm and another class DDPG to control the decentralised components.
+
+The following files are included
+
+* maddpg_tennis.py - Definee the MADDPG class contolling the centralised components and the class for the shared replay buffer.
+* single_agent.py - Define the DDPG class for the decentralised components for each agent and the class for the noise.
+* configuration.py - Stores the hyperparameters
+* model.py Definies the module classes for the actor and critic networks
+* tennis.ipynb - interactive notebook where the unity enviroment is called and the training loop is defined
+
 
 
 
