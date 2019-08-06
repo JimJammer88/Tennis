@@ -1,51 +1,25 @@
-# Report - Continuous Control with Deep Deterministic Policy Gradients
+# Report - Collaboration with Tennis Agents using MADDPG
 
 The work desribed in this report was completed as part of the submission for the Deep Reinforcement Learning nanodegree by Udacity.
 
 
 ## Introduction
 
-In this project we use a modification of the Deep Deterministic Policy Gradient algortihm (DDPG) from [DDPG] to simulataneuous train 20 Reacher agents in a Unity environment. We made use of the implementation of DDPG provided in the Deep Reinforcement Learning course repository [DRLGIT], and, following the guidelines in the benchmark solution,  modifieid the code to work for multiple agents.
+In this project we implement the Multi Agent Deep Deterministic Policy Gradient algortihm (MADDPG) from [MADDPG] to train two agents to collbaorate in the UNity tennis environment.
+
+We made use of the implementation of DDPG, the single agent case, provided in the Deep Reinforcement Learning course repository [DRLGIT], and modified the code to implement MADDPG.
 
 ## Implementation Details
 
-### Modifications to use with multiple agents
-The DDPG algorithm from [DDPG] is shown below.
+### Modifications of DDPG
+The MADDPG algorithm from [MADDPG] is shown below.
 
-![DDPG Algorithm](DDG_Algorithm.png)
-Format: ![DDPG Algorithm](url)
+![MADDPG Algorithm](maddpg.JPG)
+Format: ![MADDPG Algorithm](url)
 
-In this project we made use of the implementation of DDPG provided in the Deep Reinforcement Learning course repository [DRLGIT] and modifieid the code to work for multiple agents.
+In this project we made use of the implementation of DDPG provided in the Deep Reinforcement Learning course repository [DRLGIT] and modifieid the code to implemt MADDPG.
 
-
-In the modified implementation the replay buffer is shared between all 33 agents. In the step method (that is called every time step) we loop through each agent and add the most recently collected experience to the buffer.
-
-```python
-
-for i in range (self.num_agents):
-  state,action,reward,next_state,done = multi_states[i,:], multi_actions[i,:],multi_rewards[i],multi_next_states[i,:],           multi_done[i]
-  self.memory.add(state, action, reward, next_state, done)
-```
-
-One of the issues we face when collecting experience from multiple agents is that the learning algortihm can become very unstable, particularly if we make an update for every agent at every time step. Following the recomenations in the benchmark solution we instead only make 10 updates to the networks every 20 timesteps.
-
-```python
-if time_step%20== 0 and len(self.memory) > BATCH_SIZE:
-    for j in range(10):
-        experiences = self.memory.sample()
-        self.learn(experiences, GAMMA)
-```
-
-Another recomended step we followed to reduce instability was to clip the gradient of the  crtic network.
-
-```python
-self.critic_optimizer.zero_grad()
-        critic_loss.backward()
-        torch.nn.utils.clip_grad_norm(self.critic_local.parameters(), 1)
-        self.critic_optimizer.step()
-```
-
-Another difference from the provided code is that we removed the clipping of each action. This was originally a temporary measure because of uncertainty around the best values to clip to in a new environment. As learning was stable without clipping the actions it was decided that no action clipping was necessary.
+This was done by creating a class MADDPG which would call two instance of a single agent w
 
 
 
@@ -55,18 +29,15 @@ The network architecture is unchanged from the provided code and is desribed bel
 
 The actor network maps states to actions with the following simple architecture.
 
-* A fully connected layer with 256 dimension followed by Relu activation
+* Two fully connected layers with 64 dimension followed by Relu activation
 
 * An output layer to the action dimension follwed by tanh activation.
 
 
 The critic network maps the state-action space to a single value using the following architecture;
 
-* The 33 dimensional state is fed through a fully connected layer of 256 dimensions followed by Leaky Relu activation.
 
-* The 256 dimesional output is combined with the 4 dimensional action and fed into a fully connected layer of 256 dimeniosn followed by Leaky Reul activation.
-
-* A 128 dimensional fully connected layer followed by Leaky Relue
+* Two fully connected layers with 64 dimension followed by Relu activation
 
 * A 1 dimensional output layer.
 
@@ -85,46 +56,45 @@ The hyperparameters used are listed below. These were kept the same as the provi
 
 HyperParameter | Description | Value
 ------------ | ------------- | -------------  
-BUFFER_SIZE | Size of the Replay buffer| 2e5
-BATCH_SIZE | Size of each minibatch for gradient update| 1024
+BUFFER_SIZE | Size of the Replay buffer| 1e5
+BATCH_SIZE | Size of each minibatch for gradient update| 512
 GAMMA| The discounting factor| 0.99
 TAU | Soft update parameter| 1e^-3
-LR_ACTOR | Learning rate of the actor | 1e^-4
-LR_CRITIC | Learning rate of the critic | 1e^-4
-N_TIMESTEP | Number of timesteps between learning from experiences | 20
-N_GRAD_UPDATE| Number of updates performed every N_TIMESTEPS | 10
-MU | Drift parameter of the OU process used to add noise to the actions | 0
-THETA | Speed parameter of the OU process used to add noise to the actions | 0.15
-SIGMA | Volatility parameter of the OU process used to add noise to the actions | 0.2
+LR_ACTOR | Learning rate of the actor | 1e^-3
+LR_CRITIC | Learning rate of the critic | 1e^-3
+UPDATE_EVERY  | Number of timesteps between learning from experiences | 2
+NUM_UPDATE| Number of updates performed every UPDATE_EVERY | 4
+OU_MU | Drift parameter of the OU process used to add noise to the actions | 0
+OU_THETA | Speed parameter of the OU process used to add noise to the actions | 0.15
+OU_SIGMA | Volatility parameter of the OU process used to add noise to the actions | 0.2
+EPSILON_START | Initial multiplier applied to OU Noise | 1
+EPSILON_DECAY_PERIOD | Number of episodes over with EPSILON decays linearly | 3000
+EPSILON_MIN | Min value of Epsilon , floor of decay | 0.1
 
 
 ## Results
 
-A single training run was made with the final agent.
+After multiple experiments with different hyperparameters, a single training run solving the task was made.
 
-The environment is considered solved when the average score of the 33 agents over 100 episodes is maintained at or above 30.
+The environment is considered solved when the max score between both agents average over 100 consecutive episodes exceeds 0.5.
 
-Our agent achieved this after episode 202.
+Our agent achieved this after episode 1091.
 
-The score (averaged over all agents) for each episode and the average score over the previous 100 episodes is plotted below.
+The score (max over both agents) for each episode and the average score over the previous 100 episodes is plotted below.
 
-![OnlineTraining](online_training.png)
-Format: ![online_training](url)
+![Training](plot.JPG)
+Format: ![training](url)
 
-
-The unity environment includes tools for visualisation. Below is a short clip of the trained agent(after 400 episodes) in the environment. The full episode has been posted on [YouTube](https://www.youtube.com/watch?v=OseH3sEPzuI)
-
-![](Trained.gif)
 
 
 ## Ideas for Future Work
 The current implementation could be improved by considering the following
 * Systematic hyper parameter optimisation
 * Using batch normalisation
-* Reducing the weight applied to noise in the actions as training progressed.
-* Introducing clipping to the actions.
+* Using a prioritised replay buffer
 
-It would also be interesting to implement the distributed version of the algorithm described in [D4PG]
+
+It would also be interesting to implement a form of collaboraitive training that can be performed online. That is where the agents do not need to share resources for training. The paper [MADDPG] discusses options for this.
 
 ## References
 
@@ -132,4 +102,4 @@ It would also be interesting to implement the distributed version of the algorit
 
 [DRLGIT] - [DDPG implementation from Udacity](https://github.com/udacity/deep-reinforcement-learning/tree/master/ddpg-pendulum)
 
-[D4PG] - [Distributed Distributional Deterministic Policy Gradients](https://arxiv.org/pdf/1804.08617.pdf)
+[MADDPG] - [Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments](https://arxiv.org/pdf/1706.02275.pdf)
