@@ -23,8 +23,6 @@ In this project we made use of the implementation of DDPG provided in the Deep R
 
 ### Network Architecture
 
-The network architecture is unchanged from the provided code and is desribed below.
-
 The actor network maps states to actions with the following simple architecture.
 
 * Two fully connected layers with 64 dimension followed by Relu activation
