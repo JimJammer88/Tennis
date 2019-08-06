@@ -80,9 +80,9 @@ The environment is considered solved when the max score between both agents aver
 
 Our agent achieved this after episode 1091.
 
-The score (max over both agents) for each episode and the average score over the previous 100 episodes is plotted below.
+The average of the max score over the previous 100 episodes is plotted below.
 
-![Training](plot.JPG)
+![Training](Plot.JPG)
 Format: ![training](url)
 
 
