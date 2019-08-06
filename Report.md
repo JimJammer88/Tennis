@@ -65,7 +65,7 @@ EPSILON_MIN | Min value of Epsilon , floor of decay | 0.1
 
 ## Results
 
-After multiple experiments with different hyperparameters, a single training run solving the task was made.
+After multiple unsuccesful experiments with different hyperparameters, a single training run solving the task was made.
 
 The environment is considered solved when the max score between both agents average over 100 consecutive episodes exceeds 0.5.
 
